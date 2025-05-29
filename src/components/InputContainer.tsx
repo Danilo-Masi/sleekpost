@@ -3,7 +3,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import type { ReactNode } from "react";
 import { Button } from "./ui/button";
-import { Check } from "lucide-react";
+import { Check, ScanText } from "lucide-react";
+import { useAppContext } from "@/context/AppContext";
 
 const subreddits = [
     { value: "SaaS", placeholder: "r/SaaS" },
@@ -15,7 +16,7 @@ const subreddits = [
 
 function BlockContainer({ children }: { children: ReactNode }) {
     return (
-        <div className="w-full h-auto flex flex-col gap-3">
+        <div className="w-full h-fit flex flex-col gap-3">
             {children}
         </div>
     );
@@ -32,10 +33,10 @@ function ErrorLabel({ id, errorMsg }: { id: string, errorMsg: string }) {
 function SubredditInput() {
     return (
         <BlockContainer>
-            <StartLabel id="label-subreddit" msg="Select the subreddit that you want to publish" />
+            <StartLabel id="label-subreddit" msg="Choose a subreddit to target" />
             <Select>
-                <SelectTrigger className="w-[300px] cursor-pointer">
-                    <SelectValue placeholder="r/subreddit" />
+                <SelectTrigger className="w-full md:w-[300px] cursor-pointer">
+                    <SelectValue placeholder="Select a subreddit" />
                 </SelectTrigger>
                 <SelectContent id="label-subreddit">
                     {subreddits.map(item => (
@@ -43,7 +44,7 @@ function SubredditInput() {
                     ))}
                 </SelectContent>
             </Select>
-            <ErrorLabel id="label-subreddit" errorMsg="Select one of this before procede" />
+            <ErrorLabel id="label-subreddit" errorMsg="Please select a subreddit before continuing" />
         </BlockContainer>
     );
 }
@@ -51,9 +52,9 @@ function SubredditInput() {
 function TitleInput() {
     return (
         <BlockContainer>
-            <StartLabel id="label-title" msg="Insert the post title" />
-            <Textarea id="label-title" className="resize-none" placeholder="The best story of my life..." maxLength={100} minLength={1} />
-            <ErrorLabel id="label-title" errorMsg="Insert the title before procede" />
+            <StartLabel id="label-title" msg="Write a clear and engaging title" />
+            <Textarea id="label-title" className="resize-none" placeholder="E.g. How I turned my side project into a profitable SaaS" maxLength={100} minLength={1} />
+            <ErrorLabel id="label-title" errorMsg="The title is required to continue" />
         </BlockContainer>
     );
 }
@@ -61,24 +62,29 @@ function TitleInput() {
 function ContentInput() {
     return (
         <BlockContainer>
-            <StartLabel id="label-content" msg="Insert the post content" />
-            <Textarea id="label-content" className="resize-none h-[40svh] overflow-y-scroll" placeholder="My story begin..." maxLength={1000} minLength={10} />
-            <ErrorLabel id="label-content" errorMsg="Insert the post content before procede" />
+            <StartLabel id="label-content" msg="Tell your story or share your idea" />
+            <Textarea id="label-content" className="resize-none h-[40svh] overflow-y-scroll" placeholder="Write or copy the full post content here…" maxLength={1000} minLength={10} />
+            <ErrorLabel id="label-content" errorMsg="The post content is required to continue" />
         </BlockContainer>
     );
 }
 
 function ButtonAnalyze() {
+
+    const { setSection } = useAppContext();
+
     return (
-        <Button className="cursor-pointer">
-            Analyze the post <Check />
+        <Button
+            className="cursor-pointer w-full"
+            onClick={() => setSection("result")}>
+            <ScanText /> Analyze My Post
         </Button>
     );
 }
 
 export default function InputContainer() {
     return (
-        <div className="w-full md:w-3/5 h-[90svh] overflow-scroll p-5 flex flex-col gap-6">
+        <div className="w-full md:w-3/5 h-auto md:h-[85svh] overflow-scroll p-0 md:px-5 py-5 md:pt-0 flex flex-wrap items-start justify-start gap-6">
             <SubredditInput />
             <TitleInput />
             <ContentInput />
