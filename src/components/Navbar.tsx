@@ -5,9 +5,15 @@ import { useAppContext } from "@/context/AppContext";
 
 export default function Navbar() {
 
-    const { setSection } = useAppContext();
+    const { setSection, setSubreddit, setSubredditError, setTitle, setTitleError, setContent, setContentError } = useAppContext();
 
     const handleClean = () => {
+        setSubreddit("");
+        setSubredditError(false);
+        setTitle("");
+        setTitleError(false);
+        setContent("");
+        setContentError(false);
         setSection("input");
     }
 
