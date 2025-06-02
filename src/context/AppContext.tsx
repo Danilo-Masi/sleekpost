@@ -1,5 +1,11 @@
 import { useState, createContext, useContext, type Dispatch, type SetStateAction } from "react";
 
+interface Analysis {
+    score: number;
+    titleSuggestions: string[];
+    contentSuggestions: string[];
+}
+
 type AppContextType = {
     section: string;
     setSection: Dispatch<SetStateAction<string>>;
@@ -15,6 +21,8 @@ type AppContextType = {
     setContent: Dispatch<SetStateAction<string>>;
     contentError: boolean;
     setContentError: Dispatch<SetStateAction<boolean>>;
+    analysisResult: Analysis | null;
+    setAnalysisResult: Dispatch<SetStateAction<Analysis | null>>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -28,6 +36,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const [titleError, setTitleError] = useState(false);
     const [content, setContent] = useState("");
     const [contentError, setContentError] = useState(false);
+    const [analysisResult, setAnalysisResult] = useState<Analysis | null>(null);
 
     return (
         <AppContext.Provider
@@ -46,6 +55,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                 setContent,
                 contentError,
                 setContentError,
+                analysisResult,
+                setAnalysisResult,
             }}>
             {children}
         </AppContext.Provider>

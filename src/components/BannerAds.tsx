@@ -1,7 +1,6 @@
 import { PartyPopper } from "lucide-react";
 import BannerContainer from "./custom/BannerContainer";
 import { Button } from "./ui/button";
-
 import face1 from '../assets/face1.webp';
 import face2 from '../assets/face2.webp';
 import face3 from '../assets/face3.webp';
@@ -9,11 +8,26 @@ import face4 from '../assets/face4.webp';
 import face5 from '../assets/face5.webp';
 
 const testimonials = [
-    { image: face1, description: "I doubled my post upvotes in just one week!" },
-    { image: face2, description: "Finally, a tool that understands Reddit." },
-    { image: face3, description: "Scheduling made my Reddit strategy 10x easier." },
-    { image: face4, description: "Simple, powerful, and effective." },
-    { image: face5, description: "The analytics helped me write better posts." },
+    {
+        image: face1,
+        description: "I'm a founder, and this got me more upvotes without guessing the best time.",
+    },
+    {
+        image: face2,
+        description: "As a dev, I love how easy it is to schedule and forget.",
+    },
+    {
+        image: face3,
+        description: "I finally hit peak hours and people actually saw my content.",
+    },
+    {
+        image: face4,
+        description: "No more posting at random. Now I just schedule and focus.",
+    },
+    {
+        image: face5,
+        description: "Reddit was confusing. This made it simple, and it works.",
+    },
 ];
 
 function Testimonial() {
@@ -30,6 +44,10 @@ function Testimonial() {
 }
 
 export default function BannerAds() {
+    const handlePublish = () => {
+        const url = "https://www.postonreddit.com/?ref=sleekpost_banner";
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
     return (
         <BannerContainer hidden={false}>
             <h1 className="font-bold text-2xl">
@@ -40,7 +58,11 @@ export default function BannerAds() {
                 <li>Schedule posts in advance</li>
                 <li>Get smart insights on your profile</li>
             </ul>
-            <Button className="bg-orange-600 hover:bg-orange-600/90 w-full cursor-pointer">Launch a viral post<PartyPopper /></Button>
+            <Button
+                className="bg-orange-600 hover:bg-orange-600/90 w-full cursor-pointer"
+                onClick={handlePublish}>
+                Launch a viral post<PartyPopper />
+            </Button>
             <Testimonial />
         </BannerContainer>
     );

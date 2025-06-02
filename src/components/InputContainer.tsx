@@ -5,6 +5,7 @@ import { useState, type ReactNode } from "react";
 import { Button } from "./ui/button";
 import { Loader2, ScanText } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
+import { analyzePost } from "@/analysis/analyzePost";
 
 const subreddits = [
     { value: "SaaS", placeholder: "r/SaaS" },
@@ -36,7 +37,7 @@ function SubredditInput() {
         <BlockContainer>
             <StartLabel id="label-subreddit" msg="Choose a subreddit to target" />
             <Select value={subreddit} onValueChange={setSubreddit} onOpenChange={() => setSubredditError(false)}>
-                <SelectTrigger className="w-full md:w-[300px] cursor-pointer">
+                <SelectTrigger className="w-full md:w-[300px] cursor-pointer border focus:ring-1 focus:ring-orange-400 focus:border-orange-400 data-[state=open]:ring-1 data-[state=open]:ring-orange-400 data-[state=open]:border-orange-400">
                     <SelectValue placeholder="Select a subreddit" />
                 </SelectTrigger>
                 <SelectContent id="label-subreddit">
@@ -59,7 +60,7 @@ function TitleInput() {
             <StartLabel id="label-title" msg="Write a clear and engaging title" />
             <Textarea
                 id="label-title"
-                className="resize-none"
+                className="resize-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-orange-400"
                 placeholder="E.g. How I turned my side project into a profitable SaaS"
                 maxLength={100}
                 minLength={1}
@@ -78,9 +79,8 @@ function ContentInput() {
             <StartLabel id="label-content" msg="Tell your story or share your idea" />
             <Textarea
                 id="label-content"
-                className="resize-none h-[40svh] overflow-y-scroll"
+                className="resize-none h-[40svh] overflow-y-scroll focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-orange-400"
                 placeholder="Write or copy the full post content here…"
-                maxLength={1000}
                 minLength={10}
                 value={content}
                 onChange={e => setContent(e.target.value)}
@@ -103,27 +103,50 @@ function ButtonAnalyze({ handleAnalyze, isLoading }: { handleAnalyze: () => void
 
 export default function InputContainer() {
     const [isLoading, setLoading] = useState<boolean>(false);
-    const { setSection, subreddit, setSubredditError, title, setTitleError, content, setContentError } = useAppContext();
+    const { setSection, subreddit, setSubredditError, title, setTitleError, content, setContentError, setAnalysisResult } = useAppContext();
+
+    const handleValidate = () => {
+        let isValid = true;
+
+        if (!subreddit || subreddit.trim().length === 0) {
+            setSubredditError(true);
+            isValid = false;
+        } else {
+            setSubredditError(false);
+        }
+
+        if (!title || title.trim().length === 0) {
+            setTitleError(true);
+            isValid = false;
+        } else {
+            setTitleError(false);
+        }
+
+        if (!content || content.trim().length === 0) {
+            setContentError(true);
+            isValid = false;
+        } else {
+            setContentError(false);
+        }
+
+        return isValid;
+    };
 
     const handleAnalyze = () => {
         setLoading(true);
-        handleValidate();
+        const isValid = handleValidate();
+
+        if (!isValid) {
+            setLoading(false);
+            return;
+        }
+
+        const result = analyzePost({ title, content, subreddit: subreddit.toLowerCase() });
+        setAnalysisResult(result);
+
         setLoading(false);
         setSection("result");
-
-    }
-
-    const handleValidate = () => {
-        if (subreddit.length === 0) {
-            setSubredditError(true);
-        }
-        if (title.length === 0) {
-            setTitleError(true);
-        }
-        if (content.length <= 0) {
-            setContentError(true);
-        }
-    }
+    };
 
     return (
         <div className="w-full md:w-3/5 h-auto md:h-[85svh] overflow-scroll p-0 md:px-5 py-5 md:pt-0 flex flex-wrap items-start justify-start gap-6">

@@ -1,10 +1,9 @@
 import { Label } from "@radix-ui/react-label";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "./ui/button";
 import { Progress } from "@/components/ui/progress"
 import { ArrowLeft, Pencil } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
-
 
 function AnalysesContainer({ children, width, height }: { children: ReactNode, width?: string, height?: string }) {
     return (
@@ -19,55 +18,156 @@ function StartLabel({ id, msg }: { id: string, msg: string }) {
 }
 
 function ScoreAnalyses() {
+    const { analysisResult } = useAppContext();
+    const renderizeColor = () => {
+        if (analysisResult?.score && analysisResult.score >= 80) {
+            return "text-green-500";
+        } else if (analysisResult?.score && analysisResult.score >= 50) {
+            return "text-yellow-500";
+        } else {
+            return "text-red-500";
+        }
+    }
     return (
         <AnalysesContainer width="md:w-[calc(30%-0.75rem)]" height="md:h-[30svh]">
             <StartLabel id="overall-score" msg="Overall Score" />
-            <h1 className="font-bold text-5xl w-full flex items-start justify-center">55%</h1>
+            <div className="w-full flex flex-col items-center justify-center gap-2">
+                <h1 className={`font-bold text-6xl ${renderizeColor()}`}>{analysisResult?.score}%</h1>
+                <p className="text-sm text-gray-500">Based on Reddit best practices</p>
+            </div>
         </AnalysesContainer>
     );
 }
 
 function ProgressAnalyses() {
+    const { analysisResult } = useAppContext();
+    const [text, setText] = useState("");
+
+    const goodMessages = [
+        "You're almost there!",
+        "Solid post, just a few tweaks away!",
+        "Great job! This could really work.",
+        "Your title stands out well.",
+        "Nice! This looks strong.",
+        "Looks like a winner!",
+        "You're close to a great post!",
+        "Impressive! Just a bit more polish.",
+        "Strong structure overall!",
+        "Almost Reddit ready!"
+    ];
+
+    const averageMessages = [
+        "Not bad, but there's room to grow.",
+        "You're halfway there, keep pushing.",
+        "Getting better, stay focused.",
+        "Some parts work, others need more thought.",
+        "It’s shaping up, but still rough.",
+        "You’ve got potential, refine it!",
+        "You're building something good.",
+        "A solid draft. Let’s sharpen it.",
+        "Okay start, let’s make it pop.",
+        "Progress is progress, keep going!"
+    ];
+
+    const badMessages = [
+        "This needs a stronger hook.",
+        "Still rough, try again with focus.",
+        "Keep going, it’s not there yet.",
+        "Right now it’s too generic.",
+        "Let’s rethink the message.",
+        "You can do better, go deeper.",
+        "Not clear enough yet.",
+        "Let’s make it more engaging.",
+        "This needs more punch.",
+        "You’re just getting started."
+    ];
+
+    const getRandomMessage = (score: number): string => {
+        if (score >= 80) {
+            return goodMessages[Math.floor(Math.random() * goodMessages.length)];
+        } else if (score >= 50) {
+            return averageMessages[Math.floor(Math.random() * averageMessages.length)];
+        } else {
+            return badMessages[Math.floor(Math.random() * badMessages.length)];
+        }
+    };
+
+    useEffect(() => {
+        if (analysisResult?.score !== undefined) {
+            const msg = getRandomMessage(analysisResult.score);
+            setText(msg);
+        }
+    }, [analysisResult?.score]);
+
+    const renderizeColor = () => {
+        if (analysisResult?.score && analysisResult.score >= 80) {
+            return "bg-green-100 [&>div]:bg-green-600";
+        } else if (analysisResult?.score && analysisResult.score >= 50) {
+            return "bg-yellow-100 [&>div]:bg-yellow-600";
+        } else {
+            return "bg-red-100 [&>div]:bg-red-600";
+        }
+    }
+
     return (
         <AnalysesContainer width="md:w-[calc(70%-0.75rem)]" height="md:h-[30svh]">
-            <StartLabel id="progress-bar" msg="How strong is your post?" />
-            <div className="w-full flex flex-col items-start justify-center gap-6" id="progress-bar">
-                <Progress value={55} />
-                <p>Lorem ipsum dolor sit amet.</p>
+            <StartLabel id="progress-bar" msg="Post Strength Analysis" />
+            <div className="w-full md:w-2/3 h-full flex flex-col items-start justify-center gap-6">
+                <Progress
+                    value={analysisResult?.score || 0}
+                    className={renderizeColor()} />
+                <p className="text-sm text-gray-800">{text}</p>
             </div>
         </AnalysesContainer>
-    )
+    );
 }
 
 function TitleAnalyses() {
+    const { analysisResult } = useAppContext();
     return (
-        <AnalysesContainer height="md:h-[30svh]">
-            <StartLabel id="title-feedback" msg="Title feedback" />
+        <AnalysesContainer>
+            <StartLabel id="title-feedback" msg="Title Optimization Tips" />
+            <ul className="w-full flex flex-col gap-3 list-disc list-inside text-sm text-gray-700" id="title-feedback">
+                {analysisResult?.titleSuggestions.map((item, index) => (
+                    <li key={index} className="leading-relaxed">{item}</li>
+                ))}
+            </ul>
         </AnalysesContainer>
     );
 }
 
 function ContentAnalyses() {
+    const { analysisResult } = useAppContext();
     return (
-        <AnalysesContainer height="md:h-[30svh]">
-            <StartLabel id="content-feedback" msg="Post content feedback" />
+        <AnalysesContainer>
+            <StartLabel id="content-feedback" msg="Content Enhancement Suggestions" />
+            <ul className="w-full flex flex-col gap-3 list-disc list-inside text-sm text-gray-700" id="content-feedback">
+                {analysisResult?.contentSuggestions.map((item, index) => (
+                    <li key={index} className="leading-relaxed">{item}</li>
+                ))}
+            </ul>
         </AnalysesContainer>
     );
 }
 
 function Buttons() {
     const { setSection } = useAppContext();
+    const handlePublish = () => {
+        const url = "https://www.postonreddit.com/?ref=sleekpost_publish";
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
     return (
-        <div className="w-full h-fit rounded-lg flex flex-col gap-6">
+        <div className="w-full h-fit rounded-lg flex flex-col gap-4">
             <Button
-                className="cursor-pointer"
+                variant="outline"
+                className="cursor-pointer hover:bg-gray-100"
                 onClick={() => setSection("input")}>
-                <ArrowLeft /> Go back and edit your post
+                <ArrowLeft className="mr-2" /> Edit Your Post
             </Button>
             <Button
                 className="bg-orange-600 hover:bg-orange-600/90 cursor-pointer"
-                onClick={() => window.location.href = "https://www.postonreddit.com/?ref=sleekpost"}>
-                <Pencil /> Your post is ready, publish it on Reddit now
+                onClick={handlePublish}>
+                <Pencil className="mr-2" /> Publish on Reddit
             </Button>
         </div>
     );
