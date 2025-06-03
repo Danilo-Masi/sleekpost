@@ -14,6 +14,7 @@ type AnalyzeResult = {
 };
 
 export function analyzePost({ title, content, subreddit }: AnalyzeInput): AnalyzeResult {
+    // Base analysis
     const {
         delta: titleDelta,
         suggestions: titleSuggestionsBase,
@@ -27,7 +28,7 @@ export function analyzePost({ title, content, subreddit }: AnalyzeInput): Analyz
     let subredditDelta = 0;
     const subredditSuggestions: string[] = [];
 
-    // Applica le regole specifiche della subreddit
+    // Apply subreddit-specific rules if applicable
     if (subreddit?.toLowerCase() === "saas") {
         for (const rule of saasRules.checks) {
             // Controlla se la regola viene violata dal title o dal content
@@ -39,11 +40,14 @@ export function analyzePost({ title, content, subreddit }: AnalyzeInput): Analyz
         }
     }
 
-    const rawScore = 100 + titleDelta + contentDelta + subredditDelta;
-    const score = Math.max(0, Math.min(100, rawScore)); // Clamp tra 0 e 100
+    // Calculate final score (70% base rules, 30% subreddit rules)
+    const baseScore = 100 + titleDelta + contentDelta;
+    const finalScore = subreddit
+        ? Math.round((baseScore * 0.7) + ((100 + subredditDelta) * 0.3))
+        : baseScore;
 
     return {
-        score,
+        score: Math.max(0, Math.min(100, finalScore)),
         titleSuggestions: titleSuggestionsBase,
         contentSuggestions: [...contentSuggestionsBase, ...subredditSuggestions],
     };

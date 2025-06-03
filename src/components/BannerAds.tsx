@@ -53,15 +53,15 @@ export default function BannerAds() {
             <h1 className="font-bold text-2xl">
                 Boost your Reddit reach by <span className="text-orange-600 italic">44%</span>
             </h1>
-            <ul className="list-disc list-inside text-gray-700 space-y-2 mt-4">
+            <ul className="list-disc list-outside text-gray-700 space-y-2 mt-4 ml-4">
                 <li>Discover the best time to post</li>
                 <li>Schedule posts in advance</li>
                 <li>Get smart insights on your profile</li>
             </ul>
             <Button
-                className="bg-orange-600 hover:bg-orange-600/90 w-full cursor-pointer"
+                className="bg-orange-600 hover:bg-orange-600/90 w-full cursor-pointer font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
                 onClick={handlePublish}>
-                Launch a viral post<PartyPopper />
+                Launch a viral post <PartyPopper className="w-4 h-4" />
             </Button>
             <Testimonial />
         </BannerContainer>

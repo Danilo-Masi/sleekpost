@@ -1,4 +1,4 @@
-import { ScanText } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { Button } from "./ui/button";
 import icon from '../assets/icon.png';
 import { useAppContext } from "@/context/AppContext";
@@ -23,7 +23,7 @@ export default function Navbar() {
             <Button
                 className="bg-orange-600 hover:bg-orange-600/90 cursor-pointer"
                 onClick={handleClean}>
-                <ScanText /> Analyze New Post
+                <RotateCcw /> Analyze New Post
             </Button>
         </div>
     );

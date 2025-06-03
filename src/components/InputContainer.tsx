@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { useState, type ReactNode } from "react";
 import { Button } from "./ui/button";
-import { Loader2, ScanText } from "lucide-react";
+import { Loader2, ScanText, Copy } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
 import { analyzePost } from "@/analysis/analyzePost";
 
@@ -55,18 +55,35 @@ function SubredditInput() {
 
 function TitleInput() {
     const { title, setTitle, titleError, setTitleError } = useAppContext();
+
+    const handleCopy = () => {
+        if (title) {
+            navigator.clipboard.writeText(title);
+        }
+    };
+
     return (
         <BlockContainer>
             <StartLabel id="label-title" msg="Write a clear and engaging title" />
-            <Textarea
-                id="label-title"
-                className="resize-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-orange-400"
-                placeholder="E.g. How I turned my side project into a profitable SaaS"
-                maxLength={100}
-                minLength={1}
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                onFocus={() => setTitleError(false)} />
+            <div className="relative">
+                <Textarea
+                    id="label-title"
+                    className="resize-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-orange-400 pr-10"
+                    placeholder="E.g. How I turned my side project into a profitable SaaS"
+                    maxLength={100}
+                    minLength={1}
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    onFocus={() => setTitleError(false)} />
+                {title && (
+                    <button
+                        onClick={handleCopy}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-md transition-colors"
+                        title="Copy to clipboard">
+                        <Copy className="w-4 h-4 text-gray-500" />
+                    </button>
+                )}
+            </div>
             <ErrorLabel id="label-title" errorMsg="The title is required to continue" isVisible={titleError} />
         </BlockContainer>
     );
@@ -94,7 +111,7 @@ function ButtonAnalyze({ handleAnalyze, isLoading }: { handleAnalyze: () => void
     return (
         <Button
             disabled={isLoading}
-            className={`cursor-pointer w-full`}
+            className="cursor-pointer w-full py-5"
             onClick={handleAnalyze}>
             {isLoading ? (<><Loader2 className="animate-spin" /> Analyzing</>) : (<><ScanText /> Analyze My Post</>)}
         </Button>

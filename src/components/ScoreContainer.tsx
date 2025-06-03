@@ -14,7 +14,7 @@ function AnalysesContainer({ children, width, height }: { children: ReactNode, w
 }
 
 function StartLabel({ id, msg }: { id: string, msg: string }) {
-    return <Label htmlFor={id} className="text-md font-semibold mb-6">{msg}</Label>
+    return <Label htmlFor={id} className="text-md font-semibold mb-6 md:mb-3">{msg}</Label>
 }
 
 function ScoreAnalyses() {
@@ -31,7 +31,7 @@ function ScoreAnalyses() {
     return (
         <AnalysesContainer width="md:w-[calc(30%-0.75rem)]" height="md:h-[30svh]">
             <StartLabel id="overall-score" msg="Overall Score" />
-            <div className="w-full flex flex-col items-center justify-center gap-2">
+            <div className="w-full h-fit flex flex-col items-center justify-center gap-2">
                 <h1 className={`font-bold text-6xl ${renderizeColor()}`}>{analysisResult?.score}%</h1>
                 <p className="text-sm text-gray-500">Based on Reddit best practices</p>
             </div>
@@ -112,7 +112,7 @@ function ProgressAnalyses() {
     return (
         <AnalysesContainer width="md:w-[calc(70%-0.75rem)]" height="md:h-[30svh]">
             <StartLabel id="progress-bar" msg="Post Strength Analysis" />
-            <div className="w-full md:w-2/3 h-full flex flex-col items-start justify-center gap-6">
+            <div className="w-full h-fit flex flex-col items-start justify-center gap-6 ">
                 <Progress
                     value={analysisResult?.score || 0}
                     className={renderizeColor()} />
