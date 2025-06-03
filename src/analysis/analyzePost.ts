@@ -4,7 +4,7 @@ import { saasRules } from "./subredditRules/saas";
 type AnalyzeInput = {
     title: string;
     content: string;
-    subreddit?: string; // es. "saas"
+    subreddit?: string;
 };
 
 type AnalyzeResult = {
@@ -40,10 +40,10 @@ export function analyzePost({ title, content, subreddit }: AnalyzeInput): Analyz
         }
     }
 
-    // Calculate final score (70% base rules, 30% subreddit rules)
+    // Calculate final score (80% base rules, 20% subreddit rules)
     const baseScore = 100 + titleDelta + contentDelta;
     const finalScore = subreddit
-        ? Math.round((baseScore * 0.7) + ((100 + subredditDelta) * 0.3))
+        ? Math.round((baseScore * 0.8) + ((100 + subredditDelta) * 0.2))
         : baseScore;
 
     return {

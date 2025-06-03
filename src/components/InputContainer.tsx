@@ -1,9 +1,9 @@
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode, useCallback } from "react";
 import { Button } from "./ui/button";
-import { Loader2, ScanText, Copy } from "lucide-react";
+import { Loader2, ScanText, Copy, Check } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
 import { analyzePost } from "@/analysis/analyzePost";
 
@@ -55,12 +55,30 @@ function SubredditInput() {
 
 function TitleInput() {
     const { title, setTitle, titleError, setTitleError } = useAppContext();
+    const [isCopied, setCopied] = useState<boolean>(false);
+    const [isCopying, setIsCopying] = useState<boolean>(false);
 
-    const handleCopy = () => {
-        if (title) {
-            navigator.clipboard.writeText(title);
+    const handleCopy = useCallback(async () => {
+        if (!title || isCopying) return;
+        try {
+            setIsCopying(true);
+            await navigator.clipboard.writeText(title);
+            setCopied(true);
+        } catch (err) {
+            console.error('Failed to copy text:', err);
+        } finally {
+            setIsCopying(false);
         }
-    };
+    }, [title, isCopying]);
+
+    useEffect(() => {
+        if (isCopied) {
+            const timer = setTimeout(() => {
+                setCopied(false);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [isCopied]);
 
     return (
         <BlockContainer>
@@ -78,9 +96,10 @@ function TitleInput() {
                 {title && (
                     <button
                         onClick={handleCopy}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-md transition-colors"
-                        title="Copy to clipboard">
-                        <Copy className="w-4 h-4 text-gray-500" />
+                        disabled={isCopying}
+                        className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md transition-colors cursor-pointer ${isCopied ? 'hover:bg-green-100' : 'hover:bg-zinc-100'} ${isCopying && 'opacity-50 cursor-not-allowed'}`}
+                        title={isCopying ? "Copying..." : "Copy to clipboard"}>
+                        {isCopied ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5 text-zinc-600" />}
                     </button>
                 )}
             </div>
@@ -91,17 +110,53 @@ function TitleInput() {
 
 function ContentInput() {
     const { content, setContent, contentError, setContentError } = useAppContext();
+    const [isCopied, setCopied] = useState<boolean>(false);
+    const [isCopying, setIsCopying] = useState<boolean>(false);
+
+    const handleCopy = useCallback(async () => {
+        if (!content || isCopying) return;
+        try {
+            setIsCopying(true);
+            await navigator.clipboard.writeText(content);
+            setCopied(true);
+        } catch (err) {
+            console.error('Failed to copy text:', err);
+        } finally {
+            setIsCopying(false);
+        }
+    }, [content, isCopying]);
+
+    useEffect(() => {
+        if (isCopied) {
+            const timer = setTimeout(() => {
+                setCopied(false);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [isCopied]);
+
     return (
         <BlockContainer>
             <StartLabel id="label-content" msg="Tell your story or share your idea" />
-            <Textarea
-                id="label-content"
-                className="resize-none h-[40svh] overflow-y-scroll focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-orange-400"
-                placeholder="Write or copy the full post content here…"
-                minLength={10}
-                value={content}
-                onChange={e => setContent(e.target.value)}
-                onFocus={() => setContentError(false)} />
+            <div className="relative">
+                <Textarea
+                    id="label-content"
+                    className="resize-none h-[40svh] overflow-y-scroll focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-orange-400"
+                    placeholder="Write or copy the full post content here…"
+                    minLength={10}
+                    value={content}
+                    onChange={e => setContent(e.target.value)}
+                    onFocus={() => setContentError(false)} />
+                {content && (
+                    <button
+                        onClick={handleCopy}
+                        disabled={isCopying}
+                        className={`absolute right-2 bottom-0 -translate-y-1/2 p-2 rounded-md transition-colors cursor-pointer ${isCopied ? 'hover:bg-green-100' : 'hover:bg-zinc-100'} ${isCopying && 'opacity-50 cursor-not-allowed'}`}
+                        title={isCopying ? "Copying..." : "Copy to clipboard"}>
+                        {isCopied ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5 text-zinc-600" />}
+                    </button>
+                )}
+            </div>
             <ErrorLabel id="label-content" errorMsg="The post content is required to continue" isVisible={contentError} />
         </BlockContainer>
     );

@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Fallback from "./components/custom/Fallback";
+import InstallPrompt from './components/InstallPrompt';
 const Homepage = lazy(() => import("./pages/Homepage"));
 const Errorpage = lazy(() => import("./pages/Errorpage"));
 
@@ -19,6 +20,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AppRoutes />
+      <InstallPrompt />
     </BrowserRouter>
   );
 }
