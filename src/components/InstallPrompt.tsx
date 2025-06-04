@@ -53,7 +53,7 @@ export default function InstallPrompt() {
             </p>
             <Button
                 onClick={handleInstall}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white cursor-pointer">
+                className="w-full bg-orange-600 hover:bg-orange-600/90 cursor-pointer">
                 <Download /> Install
             </Button>
         </div>

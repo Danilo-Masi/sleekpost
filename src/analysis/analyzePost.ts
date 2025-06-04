@@ -1,5 +1,7 @@
 import { evaluateTitle, evaluateContent } from "./baseRules";
 import { saasRules } from "./subredditRules/saas";
+import { entrepreneurRideAlongRules } from "./subredditRules/entrepreneurRideAlong";
+import { entrepreneurRules } from "./subredditRules/entrepreneur";
 
 type AnalyzeInput = {
     title: string;
@@ -35,6 +37,20 @@ export function analyzePost({ title, content, subreddit }: AnalyzeInput): Analyz
             if (rule.test(title) || rule.test(content)) {
                 // penalty è negativo, quindi si somma direttamente
                 subredditDelta += rule.penalty ?? -10; // se manca penalty, default a -10
+                subredditSuggestions.push(rule.message);
+            }
+        }
+    } else if (subreddit?.toLowerCase() === "entrepreneurridealong") {
+        for (const rule of entrepreneurRideAlongRules.checks) {
+            if (rule.test(title) || rule.test(content)) {
+                subredditDelta += rule.penalty ?? -10;
+                subredditSuggestions.push(rule.message);
+            }
+        }
+    } else if (subreddit?.toLowerCase() === "entrepreneur") {
+        for (const rule of entrepreneurRules.checks) {
+            if (rule.test(title) || rule.test(content)) {
+                subredditDelta += rule.penalty ?? -10;
                 subredditSuggestions.push(rule.message);
             }
         }

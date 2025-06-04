@@ -2,7 +2,7 @@ import { Label } from "@radix-ui/react-label";
 import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "./ui/button";
 import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, Pencil } from "lucide-react";
+import { MousePointerClick, Undo2 } from "lucide-react";
 import { useAppContext } from "@/context/AppContext";
 
 function AnalysesContainer({ children, width, height }: { children: ReactNode, width?: string, height?: string }) {
@@ -162,12 +162,12 @@ function Buttons() {
                 variant="outline"
                 className="cursor-pointer hover:bg-gray-100"
                 onClick={() => setSection("input")}>
-                <ArrowLeft className="mr-2" /> Edit Your Post
+                <Undo2 /> Edit Your Post
             </Button>
             <Button
                 className="bg-orange-600 hover:bg-orange-600/90 cursor-pointer"
                 onClick={handlePublish}>
-                <Pencil className="mr-2" /> Publish on Reddit
+                <MousePointerClick /> Publish on Reddit
             </Button>
         </div>
     );

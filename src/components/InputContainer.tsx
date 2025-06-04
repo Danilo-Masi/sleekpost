@@ -11,7 +11,6 @@ const subreddits = [
     { value: "SaaS", placeholder: "r/SaaS" },
     { value: "Entrepreneur", placeholder: "r/Entrepreneur" },
     { value: "EntrepreneurRideAlong", placeholder: "r/EntrepreneurRideAlong" },
-    { value: "SideProject", placeholder: "r/SideProject" },
     { value: "other", placeholder: "Other" },
 ];
 

@@ -4,7 +4,6 @@ import icon from '../assets/icon.png';
 import { useAppContext } from "@/context/AppContext";
 
 export default function Navbar() {
-
     const { setSection, setSubreddit, setSubredditError, setTitle, setTitleError, setContent, setContentError } = useAppContext();
 
     const handleClean = () => {
